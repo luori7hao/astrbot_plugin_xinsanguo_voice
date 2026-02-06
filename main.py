@@ -1,25 +1,68 @@
 import os
 import json
-import logging
 import random
 import re
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register
-from astrbot.api import AstrBotConfig
+from astrbot.api import AstrBotConfig, logger
+from astrbot.api.star import StarTools
 import astrbot.api.message_components as Comp
 
-logger = logging.getLogger("astrbot")
+# 默认 LLM 唤醒词列表（模块级常量）
+DEFAULT_LLM_PATTERNS = [
+    r'[?？]',
+    r'怎么',
+    r'如何',
+    r'为什么',
+    r'什么是',
+    r'是什么',
+    r'能不能',
+    r'可不可以',
+    r'帮我',
+    r'请问',
+    r'告诉我',
+    r'解释',
+    r'说说',
+    r'介绍',
+    r'推荐',
+    r'建议',
+    r'分析',
+    r'总结',
+    r'翻译',
+    r'写一',
+    r'帮忙',
+    r'教我',
+    r'怎样',
+    r'哪个',
+    r'哪些',
+    r'多少',
+    r'几个',
+    r'有没有',
+    r'是否',
+    r'能否',
+    r'可以吗',
+    r'行吗',
+    r'好吗',
+    r'对吗',
+    r'吗$',
+]
 
-@register("xinsanguo_voice", "落日七号、复读机长", "新三国自动玩梗语音插件 - 识别聊天中的新三国经典台词关键词，自动发送对应语音", "1.0.0", "https://github.com/astrbot_plugin_xinsanguo_voice")
+@register("astrbot_plugin_xinsanguo_voice", "落日七号、复读机长", "新三国自动玩梗语音插件 - 识别聊天中的新三国经典台词关键词，自动发送对应语音", "1.0.0", "https://github.com/luori7hao/astrbot_plugin_xinsanguo_voice")
 class SanGuoMeme(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
         self.config = config
         
-        # 路径设置：指向插件目录下的 data/sound
+        # 路径设置：音频文件在插件目录下的 data/sound（只读）
         self.base_dir = os.path.dirname(__file__)
         self.audio_dir = os.path.join(self.base_dir, "data", "sound")
-        self.rules_path = os.path.join(self.base_dir, "rules.json")
+        
+        # 使用 StarTools 获取持久化数据目录
+        self.data_dir = StarTools.get_data_dir("xinsanguo_voice")
+        self.rules_path = os.path.join(self.data_dir, "rules.json")
+        
+        # 如果持久化目录中没有 rules.json，从插件目录复制
+        self._init_rules_file()
         
         # 预加载 rules.json
         self.rules = self._load_rules()
@@ -28,54 +71,39 @@ class SanGuoMeme(Star):
         self.trigger_count = 0
         
         # 从配置加载 LLM 唤醒词列表
-        self.need_llm_patterns = self.config.get("llm_wake_patterns", [
-            r'[?？]',
-            r'怎么',
-            r'如何',
-            r'为什么',
-            r'什么是',
-            r'是什么',
-            r'能不能',
-            r'可不可以',
-            r'帮我',
-            r'请问',
-            r'告诉我',
-            r'解释',
-            r'说说',
-            r'介绍',
-            r'推荐',
-            r'建议',
-            r'分析',
-            r'总结',
-            r'翻译',
-            r'写一',
-            r'帮忙',
-            r'教我',
-            r'怎样',
-            r'哪个',
-            r'哪些',
-            r'多少',
-            r'几个',
-            r'有没有',
-            r'是否',
-            r'能否',
-            r'可以吗',
-            r'行吗',
-            r'好吗',
-            r'对吗',
-            r'吗$',
-        ])
+        self.need_llm_patterns = self.config.get("llm_wake_patterns", DEFAULT_LLM_PATTERNS)
         
         # 从配置加载其他设置
         self.keyword_ratio_threshold = self.config.get("keyword_ratio_threshold", 0.5)
         self.wake_word_prefix = self.config.get("wake_word_prefix", "/")
         self.enable_group_only = self.config.get("enable_group_only", True)
         self.random_select = self.config.get("random_select", True)
-        self.private_chat_llm_mode = self.config.get("private_chat_llm_mode", "smart")  # always, smart, never
+        self.private_chat_llm_mode = self.config.get("private_chat_llm_mode", "smart")
         
         logger.info(f"[新三国语音] 插件初始化完成！已加载 {len(self.rules)} 条台词规则。")
         logger.info(f"[新三国语音] 音频目录: {self.audio_dir}")
+        logger.info(f"[新三国语音] 数据目录: {self.data_dir}")
         logger.info(f"[新三国语音] LLM 唤醒词数量: {len(self.need_llm_patterns)}")
+
+    def _init_rules_file(self):
+        """初始化规则文件：如果持久化目录中没有，则从插件目录复制"""
+        if os.path.exists(self.rules_path):
+            return
+        
+        # 尝试从插件目录复制
+        source_rules = os.path.join(self.base_dir, "rules.json")
+        if os.path.exists(source_rules):
+            try:
+                with open(source_rules, 'r', encoding='utf-8') as f:
+                    rules = json.load(f)
+                with open(self.rules_path, 'w', encoding='utf-8') as f:
+                    json.dump(rules, f, ensure_ascii=False, indent=4)
+                logger.info(f"[新三国语音] 已从插件目录复制 rules.json 到数据目录")
+            except Exception as e:
+                logger.error(f"[新三国语音] 复制 rules.json 失败: {e}")
+                self._create_default_rules()
+        else:
+            self._create_default_rules()
 
     def _load_rules(self) -> list:
         """加载关键词规则配置"""
@@ -138,32 +166,17 @@ class SanGuoMeme(Star):
         if is_wake_word:
             logger.info(f"[新三国语音] 检测到唤醒词前缀 {self.wake_word_prefix}")
         
-        # 检查消息中是否有 @ 机器人
+        # 检查消息中是否有 @ 机器人（使用 isinstance 进行类型检查）
         is_at_bot = False
         bot_id = str(event.message_obj.self_id)
         
         for comp in event.message_obj.message:
-            comp_type = type(comp).__name__.lower()
-            if comp_type == 'at':
+            if isinstance(comp, Comp.At):
                 qq_id = getattr(comp, 'qq', None) or getattr(comp, 'target', None)
                 if qq_id and str(qq_id) == bot_id:
                     is_at_bot = True
-                    logger.info(f"[新三国语音] 检测到 @ 机器人 (组件方式)")
+                    logger.info(f"[新三国语音] 检测到 @ 机器人")
                     break
-        
-        if not is_at_bot:
-            if f"[At:{bot_id}]" in str(event.message_obj.raw_message) or f"@{bot_id}" in message:
-                is_at_bot = True
-                logger.info(f"[新三国语音] 检测到 @ 机器人 (字符串方式)")
-        
-        if not is_at_bot and event.message_obj.group_id:
-            raw_msg = str(event.message_obj.raw_message) if event.message_obj.raw_message else ""
-            if f"[At:{bot_id}]" in raw_msg:
-                is_at_bot = True
-                logger.info(f"[新三国语音] 检测到 @ 机器人 (原始消息方式1)")
-            elif f"[CQ:at,qq={bot_id}]" in raw_msg:
-                is_at_bot = True
-                logger.info(f"[新三国语音] 检测到 @ 机器人 (原始消息方式2)")
         
         logger.info(f"[新三国语音] 判断结果: is_private={is_private}, is_at_bot={is_at_bot}, is_wake_word={is_wake_word}, private_llm_mode={self.private_chat_llm_mode}")
         
@@ -175,14 +188,11 @@ class SanGuoMeme(Star):
         # 私聊消息的 LLM 回复逻辑
         if is_private:
             if self.private_chat_llm_mode == "always":
-                # 私聊总是需要 LLM 回复（因为私聊本身就是在和机器人对话）
                 logger.info(f"[新三国语音] 私聊消息，模式为 always，需要 LLM 回复")
                 return True
             elif self.private_chat_llm_mode == "never":
-                # 私聊从不需要 LLM 回复
                 logger.info(f"[新三国语音] 私聊消息，模式为 never，不需要 LLM 回复")
                 return False
-            # smart 模式：继续下面的智能判断
             logger.info(f"[新三国语音] 私聊消息，模式为 smart，进行智能判断")
         
         # 群聊：如果不是被 @，则不需要 LLM 回复
@@ -236,11 +246,9 @@ class SanGuoMeme(Star):
         
         # 选择语音
         if self.random_select:
-            # 随机选择一个语音发送
             selected = random.choice(matched_audios)
             audios_to_send = [selected]
         else:
-            # 发送所有匹配的语音
             audios_to_send = matched_audios
         
         # 发送语音消息
@@ -268,7 +276,6 @@ class SanGuoMeme(Star):
         
         event.stop_event()
 
-    # 使用指令组来实现子指令
     @filter.command_group("sanguo")
     def sanguo_group(self):
         """新三国语音插件指令组"""
@@ -331,6 +338,7 @@ class SanGuoMeme(Star):
 🎵 音频文件: {audio_count} 个
 🎯 本次运行触发次数: {self.trigger_count} 次
 📂 音频目录: {self.audio_dir}
+📂 数据目录: {self.data_dir}
 
 ⚙️ 配置信息：
 • 仅群聊触发: {'是' if self.enable_group_only else '否'}
@@ -349,7 +357,7 @@ class SanGuoMeme(Star):
         new_count = len(self.rules)
         
         # 重新加载配置
-        self.need_llm_patterns = self.config.get("llm_wake_patterns", self.need_llm_patterns)
+        self.need_llm_patterns = self.config.get("llm_wake_patterns", DEFAULT_LLM_PATTERNS)
         self.keyword_ratio_threshold = self.config.get("keyword_ratio_threshold", 0.5)
         self.wake_word_prefix = self.config.get("wake_word_prefix", "/")
         self.enable_group_only = self.config.get("enable_group_only", True)
