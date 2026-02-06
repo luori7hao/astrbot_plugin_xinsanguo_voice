@@ -1,0 +1,75 @@
+{
+  "llm_wake_patterns": {
+    "description": "LLM 唤醒词列表",
+    "type": "list",
+    "hint": "当消息包含这些词时，会触发 LLM 回复（正则表达式格式）",
+    "default": [
+      "[?？]",
+      "怎么",
+      "如何",
+      "为什么",
+      "什么是",
+      "是什么",
+      "能不能",
+      "可不可以",
+      "帮我",
+      "请问",
+      "告诉我",
+      "解释",
+      "说说",
+      "介绍",
+      "推荐",
+      "建议",
+      "分析",
+      "总结",
+      "翻译",
+      "写一",
+      "帮忙",
+      "教我",
+      "怎样",
+      "哪个",
+      "哪些",
+      "多少",
+      "几个",
+      "有没有",
+      "是否",
+      "能否",
+      "可以吗",
+      "行吗",
+      "好吗",
+      "对吗",
+      "吗$"
+    ]
+  },
+  "keyword_ratio_threshold": {
+    "description": "关键词占比阈值",
+    "type": "float",
+    "hint": "当关键词占消息长度的比例小于此值时，认为有实际内容需要 LLM 回复（0-1之间，默认0.5）",
+    "default": 0.5
+  },
+  "wake_word_prefix": {
+    "description": "唤醒词前缀",
+    "type": "string",
+    "hint": "以此字符开头的消息只触发玩梗，不触发 LLM（默认为 /）",
+    "default": "/"
+  },
+  "enable_group_only": {
+    "description": "仅群聊触发",
+    "type": "bool",
+    "hint": "是否只在群聊中触发玩梗功能",
+    "default": true
+  },
+  "private_chat_llm_mode": {
+    "description": "私聊 LLM 回复模式",
+    "type": "string",
+    "hint": "私聊时的 LLM 回复行为：always=总是回复, smart=智能判断, never=从不回复",
+    "default": "smart",
+    "options": ["always", "smart", "never"]
+  },
+  "random_select": {
+    "description": "随机选择语音",
+    "type": "bool",
+    "hint": "当一条消息匹配多个关键词时，是否随机选择一个发送",
+    "default": true
+  }
+}

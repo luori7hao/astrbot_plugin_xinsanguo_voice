@@ -1,0 +1,310 @@
+[
+    {
+        "keyword": "不可能",
+        "audio": "不可能，绝对不可能.mp3"
+    },
+    {
+        "keyword": "绝对不可能",
+        "audio": "不可能，绝对不可能.mp3"
+    },
+    {
+        "keyword": "愤怒",
+        "audio": "不要愤怒，愤怒会降低你的智慧.mp3"
+    },
+    {
+        "keyword": "生气",
+        "audio": "不要愤怒，愤怒会降低你的智慧.mp3"
+    },
+    {
+        "keyword": "智慧",
+        "audio": "不要愤怒，愤怒会降低你的智慧.mp3"
+    },
+    {
+        "keyword": "吃什么",
+        "audio": "吃什么是啊.mp3"
+    },
+    {
+        "keyword": "干杯",
+        "audio": "当浮一大白.mp3"
+    },
+    {
+        "keyword": "喝酒",
+        "audio": "当浮一大白.mp3"
+    },
+    {
+        "keyword": "庆祝",
+        "audio": "当浮一大白.mp3"
+    },
+    {
+        "keyword": "徐州",
+        "audio": "第一雄关徐州城.mp3"
+    },
+    {
+        "keyword": "雄关",
+        "audio": "第一雄关徐州城.mp3"
+    },
+    {
+        "keyword": "伯牙",
+        "audio": "都有伯牙舒淇之才.mp3"
+    },
+    {
+        "keyword": "舒淇",
+        "audio": "都有伯牙舒淇之才.mp3"
+    },
+    {
+        "keyword": "有才",
+        "audio": "都有伯牙舒淇之才.mp3"
+    },
+    {
+        "keyword": "风从虎",
+        "audio": "风从虎云从龙龙虎英雄傲苍穹.mp3"
+    },
+    {
+        "keyword": "云从龙",
+        "audio": "风从虎云从龙龙虎英雄傲苍穹.mp3"
+    },
+    {
+        "keyword": "傲苍穹",
+        "audio": "风从虎云从龙龙虎英雄傲苍穹.mp3"
+    },
+    {
+        "keyword": "有情有义",
+        "audio": "个个有情有义.mp3"
+    },
+    {
+        "keyword": "兄弟",
+        "audio": "个个有情有义.mp3"
+    },
+    {
+        "keyword": "恭喜",
+        "audio": "恭喜爹可以称帝了.mp3"
+    },
+    {
+        "keyword": "称帝",
+        "audio": "恭喜爹可以称帝了.mp3"
+    },
+    {
+        "keyword": "大盏",
+        "audio": "换大盏.mp3"
+    },
+    {
+        "keyword": "换大的",
+        "audio": "换大盏.mp3"
+    },
+    {
+        "keyword": "竟然",
+        "audio": "竟然不许.mp3"
+    },
+    {
+        "keyword": "不许",
+        "audio": "竟然不许.mp3"
+    },
+    {
+        "keyword": "不行",
+        "audio": "竟然不许.mp3"
+    },
+    {
+        "keyword": "不可以",
+        "audio": "竟然不许.mp3"
+    },
+    {
+        "keyword": "列位",
+        "audio": "列位诸公.mp3"
+    },
+    {
+        "keyword": "诸公",
+        "audio": "列位诸公.mp3"
+    },
+    {
+        "keyword": "各位",
+        "audio": "列位诸公.mp3"
+    },
+    {
+        "keyword": "龙",
+        "audio": "龙，可是帝王之征啊.mp3"
+    },
+    {
+        "keyword": "帝王",
+        "audio": "龙，可是帝王之征啊.mp3"
+    },
+    {
+        "keyword": "你干嘛",
+        "audio": "你干嘛.mp3"
+    },
+    {
+        "keyword": "干嘛",
+        "audio": "你干嘛.mp3"
+    },
+    {
+        "keyword": "生死不明",
+        "audio": "生死不明那就是死了.mp3"
+    },
+    {
+        "keyword": "失踪",
+        "audio": "生死不明那就是死了.mp3"
+    },
+    {
+        "keyword": "韩信",
+        "audio": "是我的韩信白起周亚夫.mp3"
+    },
+    {
+        "keyword": "白起",
+        "audio": "是我的韩信白起周亚夫.mp3"
+    },
+    {
+        "keyword": "周亚夫",
+        "audio": "是我的韩信白起周亚夫.mp3"
+    },
+    {
+        "keyword": "乱世",
+        "audio": "是这个乱世害了你啊.mp3"
+    },
+    {
+        "keyword": "害了",
+        "audio": "是这个乱世害了你啊.mp3"
+    },
+    {
+        "keyword": "不是我",
+        "audio": "是这个乱世害了你啊.mp3"
+    },
+    {
+        "keyword": "死",
+        "audio": "死是凉爽的夏夜.mp3"
+    },
+    {
+        "keyword": "凉爽",
+        "audio": "死是凉爽的夏夜.mp3"
+    },
+    {
+        "keyword": "夏夜",
+        "audio": "死是凉爽的夏夜.mp3"
+    },
+    {
+        "keyword": "过江",
+        "audio": "他过江我也过江.mp3"
+    },
+    {
+        "keyword": "我也",
+        "audio": "他过江我也过江.mp3"
+    },
+    {
+        "keyword": "大斧",
+        "audio": "我的大斧早就饥渴难耐了.mp3"
+    },
+    {
+        "keyword": "饥渴难耐",
+        "audio": "我的大斧早就饥渴难耐了.mp3"
+    },
+    {
+        "keyword": "饥渴",
+        "audio": "我的大斧早就饥渴难耐了.mp3"
+    },
+    {
+        "keyword": "二弟",
+        "audio": "我二弟天下无敌.mp3"
+    },
+    {
+        "keyword": "天下无敌",
+        "audio": "我二弟天下无敌.mp3"
+    },
+    {
+        "keyword": "无敌",
+        "audio": "我二弟天下无敌.mp3"
+    },
+    {
+        "keyword": "仁之剑",
+        "audio": "一把仁之剑一把义之剑.mp3"
+    },
+    {
+        "keyword": "义之剑",
+        "audio": "一把仁之剑一把义之剑.mp3"
+    },
+    {
+        "keyword": "仁义",
+        "audio": "一把仁之剑一把义之剑.mp3"
+    },
+    {
+        "keyword": "笑面虎",
+        "audio": "一对笑面虎两头乌角鲨.mp3"
+    },
+    {
+        "keyword": "乌角鲨",
+        "audio": "一对笑面虎两头乌角鲨.mp3"
+    },
+    {
+        "keyword": "跳跳虎",
+        "audio": "一对笑面虎两头乌角鲨.mp3"
+    },
+    {
+        "keyword": "脆脆鲨",
+        "audio": "一对笑面虎两头乌角鲨.mp3"
+    },
+    {
+        "keyword": "骄兵",
+        "audio": "已成骄兵而骄兵必败.mp3"
+    },
+    {
+        "keyword": "必败",
+        "audio": "已成骄兵而骄兵必败.mp3"
+    },
+    {
+        "keyword": "骄傲",
+        "audio": "已成骄兵而骄兵必败.mp3"
+    },
+    {
+        "keyword": "酸",
+        "audio": "咱家不怕酸.mp3"
+    },
+    {
+        "keyword": "柠檬",
+        "audio": "咱家不怕酸.mp3"
+    },
+    {
+        "keyword": "嫉妒",
+        "audio": "咱家不怕酸.mp3"
+    },
+    {
+        "keyword": "耳朵",
+        "audio": "扎龙自己的耳朵.mp3"
+    },
+    {
+        "keyword": "听见",
+        "audio": "扎龙自己的耳朵.mp3"
+    },
+    {
+        "keyword": "听到",
+        "audio": "扎龙自己的耳朵.mp3"
+    },
+    {
+        "keyword": "奇怪",
+        "audio": "这就不奇怪了.mp3"
+    },
+    {
+        "keyword": "不奇怪",
+        "audio": "这就不奇怪了.mp3"
+    },
+    {
+        "keyword": "部将",
+        "audio": "这是谁的部将.mp3"
+    },
+    {
+        "keyword": "谁的",
+        "audio": "这是谁的部将.mp3"
+    },
+    {
+        "keyword": "自刎",
+        "audio": "自刎归天.mp3"
+    },
+    {
+        "keyword": "归天",
+        "audio": "自刎归天.mp3"
+    },
+    {
+        "keyword": "听我号令",
+        "audio": "自刎归天.mp3"
+    },
+    {
+        "keyword": "三军听令",
+        "audio": "自刎归天.mp3"
+    }
+]

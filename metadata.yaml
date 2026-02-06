@@ -1,0 +1,5 @@
+name: xinsanguo_voice
+desc: 新三国自动玩梗语音插件 - 识别聊天中的新三国经典台词关键词，自动发送对应语音片段
+version: v1.0.0
+author: 落日七号、复读机长
+repo: https://github.com/astrbot_plugin_xinsanguo_voice
