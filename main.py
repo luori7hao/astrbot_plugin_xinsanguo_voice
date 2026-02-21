@@ -47,7 +47,7 @@ DEFAULT_LLM_PATTERNS = [
     r'吗$',
 ]
 
-@register("astrbot_plugin_xinsanguo_voice", "落日七号、复读机长", "新三国自动玩梗语音插件 - 识别聊天中的新三国经典台词关键词，自动发送对应语音", "1.0.0", "https://github.com/luori7hao/astrbot_plugin_xinsanguo_voice")
+@register("astrbot_plugin_xinsanguo_voice", "落日七号、复读机长", "新三国自动玩梗语音插件 - 识别聊天中的新三国经典台词关键词，自动发送对应语音", "1.1.0", "https://github.com/luori7hao/astrbot_plugin_xinsanguo_voice")
 class SanGuoMeme(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
@@ -70,20 +70,27 @@ class SanGuoMeme(Star):
         # 统计信息
         self.trigger_count = 0
         
-        # 从配置加载 LLM 唤醒词列表
-        self.need_llm_patterns = self.config.get("llm_wake_patterns", DEFAULT_LLM_PATTERNS)
+        # 从配置加载各项设置
+        self._load_config()
         
-        # 从配置加载其他设置
+        logger.info(f"[新三国语音] 插件初始化完成！已加载 {len(self.rules)} 条台词规则。")
+        logger.info(f"[新三国语音] 音频目录: {self.audio_dir}")
+        logger.info(f"[新三国语音] 数据目录: {self.data_dir}")
+        logger.info(f"[新三国语音] 分群模式: {self.group_control_mode} | 群组名单数: {len(self.group_list)}")
+
+    def _load_config(self):
+        """加载与刷新配置数据"""
+        self.need_llm_patterns = self.config.get("llm_wake_patterns", DEFAULT_LLM_PATTERNS)
         self.keyword_ratio_threshold = self.config.get("keyword_ratio_threshold", 0.5)
         self.wake_word_prefix = self.config.get("wake_word_prefix", "/")
         self.enable_group_only = self.config.get("enable_group_only", True)
         self.random_select = self.config.get("random_select", True)
         self.private_chat_llm_mode = self.config.get("private_chat_llm_mode", "smart")
         
-        logger.info(f"[新三国语音] 插件初始化完成！已加载 {len(self.rules)} 条台词规则。")
-        logger.info(f"[新三国语音] 音频目录: {self.audio_dir}")
-        logger.info(f"[新三国语音] 数据目录: {self.data_dir}")
-        logger.info(f"[新三国语音] LLM 唤醒词数量: {len(self.need_llm_patterns)}")
+        # 分群管理设置
+        self.group_control_mode = self.config.get("group_control_mode", "none")
+        # 统一转成字符串处理
+        self.group_list = [str(g) for g in self.config.get("group_list", [])]
 
     def _init_rules_file(self):
         """初始化规则文件：如果持久化目录中没有，则从插件目录复制"""
@@ -231,16 +238,27 @@ class SanGuoMeme(Star):
         # 检查是否是插件自己的指令
         if message.startswith("/sanguo"):
             return
+            
+        group_id = event.message_obj.group_id
+        is_private = not group_id
         
         # 检查是否仅群聊触发
-        is_private = not event.message_obj.group_id
         if self.enable_group_only and is_private:
             logger.debug(f"[新三国语音] 私聊消息，不触发玩梗")
             return
 
+        # 分群管理判断 (对群聊消息)
+        if not is_private:
+            group_id_str = str(group_id)
+            if self.group_control_mode == "blacklist" and group_id_str in self.group_list:
+                logger.debug(f"[新三国语音] 群组 {group_id_str} 在黑名单中，不响应")
+                return
+            elif self.group_control_mode == "whitelist" and group_id_str not in self.group_list:
+                logger.debug(f"[新三国语音] 群组 {group_id_str} 不在白名单中，不响应")
+                return
+
         # 匹配关键词
         matched_audios = self._match_keywords(message)
-        
         if not matched_audios:
             return
         
@@ -294,6 +312,7 @@ class SanGuoMeme(Star):
 • 有实际问题 → 发语音 + LLM 回复
 
 ⚙️ 当前配置：
+• 分群模式: {self.group_control_mode} (群组数: {len(self.group_list)})
 • 仅群聊触发: {'是' if self.enable_group_only else '否'}
 • 私聊 LLM 模式: {self.private_chat_llm_mode}
 • 唤醒词前缀: {self.wake_word_prefix}
@@ -337,10 +356,10 @@ class SanGuoMeme(Star):
 📁 规则数量: {len(self.rules)} 条
 🎵 音频文件: {audio_count} 个
 🎯 本次运行触发次数: {self.trigger_count} 次
-📂 音频目录: {self.audio_dir}
-📂 数据目录: {self.data_dir}
 
-⚙️ 配置信息：
+⚙️ 分群及设置：
+• 分群模式: {self.group_control_mode}
+• 群组列表: {', '.join(self.group_list) if self.group_list else '无'}
 • 仅群聊触发: {'是' if self.enable_group_only else '否'}
 • 私聊 LLM 模式: {self.private_chat_llm_mode}
 • 唤醒词前缀: {self.wake_word_prefix}
@@ -357,14 +376,13 @@ class SanGuoMeme(Star):
         new_count = len(self.rules)
         
         # 重新加载配置
-        self.need_llm_patterns = self.config.get("llm_wake_patterns", DEFAULT_LLM_PATTERNS)
-        self.keyword_ratio_threshold = self.config.get("keyword_ratio_threshold", 0.5)
-        self.wake_word_prefix = self.config.get("wake_word_prefix", "/")
-        self.enable_group_only = self.config.get("enable_group_only", True)
-        self.random_select = self.config.get("random_select", True)
-        self.private_chat_llm_mode = self.config.get("private_chat_llm_mode", "smart")
+        self._load_config()
         
-        yield event.plain_result(f"✅ 配置重新加载完成！\n规则: {old_count} 条 → {new_count} 条\nLLM 唤醒词: {len(self.need_llm_patterns)} 个\n私聊 LLM 模式: {self.private_chat_llm_mode}")
+        msg = (f"✅ 配置重新加载完成！\n"
+               f"规则: {old_count} 条 → {new_count} 条\n"
+               f"LLM 唤醒词: {len(self.need_llm_patterns)} 个\n"
+               f"分群模式: {self.group_control_mode} (应用名单: {len(self.group_list)} 个)")
+        yield event.plain_result(msg)
 
     async def terminate(self):
         """插件卸载时调用"""

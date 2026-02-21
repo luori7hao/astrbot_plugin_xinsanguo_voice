@@ -71,5 +71,18 @@
     "type": "bool",
     "hint": "当一条消息匹配多个关键词时，是否随机选择一个发送",
     "default": true
+  },
+  "group_control_mode": {
+    "description": "分群管理模式",
+    "type": "string",
+    "hint": "none: 无限制, blacklist: 黑名单(在以下群不响应), whitelist: 白名单(仅在以下群响应)",
+    "default": "none",
+    "options": ["none", "blacklist", "whitelist"]
+  },
+  "group_list": {
+    "description": "群组名单",
+    "type": "list",
+    "hint": "黑名单或白名单生效的群号列表（填写群号即可）",
+    "default": []
   }
 }
